@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Brain Tumor Detection System</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px;
+            font-size: 28px;
+            font-weight: bold;
+            animation: fadeIn 2s;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+            animation: fadeIn 1.5s;
+        }
+
+        .card {
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.4);
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: scale(1.02);
+        }
+
+        button {
+            padding: 12px 30px;
+            background: #3b82f6;
+            border: none;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        img {
+            margin-top: 20px;
+            width: 250px;
+            border-radius: 10px;
+        }
+
+        .result {
+            font-size: 24px;
+            margin-top: 10px;
+        }
+
+        .safe { color: #22c55e; }
+        .tumor { color: #ef4444; }
+
+        .bar {
+            background: #374151;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+
+        .fill {
+            height: 10px;
+            background: #3b82f6;
+        }
+
+        .desc {
+            margin-top: 15px;
+            line-height: 1.6;
+            color: #d1d5db;
+        }
+
+        #loading {
+            display: none;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    AI-Based Brain Tumor Detection System
+</div>
+
+<div class="container">
+
+    <div class="card">
+        <h2>Upload MRI Scan</h2>
+        <p>Please upload a brain MRI image for analysis.</p>
+
+        <form method="POST" enctype="multipart/form-data" onsubmit="showLoading()">
+            <input type="file" name="image" onchange="previewImage(event)" required><br><br>
+            <button type="submit">Analyze Image</button>
+        </form>
+
+        <div id="loading">Analyzing image, please wait...</div>
+
+        <img id="preview" style="display:none;">
+    </div>
+
+    {% if result %}
+    <div class="card">
+        <h2>Analysis Result</h2>
+
+        <div class="result {{ 'safe' if result=='no_tumor' else 'tumor' }}">
+            {{ result.replace('_',' ').title() }}
+        </div>
+
+        <h3>Prediction Confidence</h3>
+        {% for key, value in probabilities.items() %}
+            <p>{{ key }}: {{ value }}%</p>
+            <div class="bar">
+                <div class="fill" style="width: {{ value }}%;"></div>
+            </div>
+        {% endfor %}
+
+        <div class="desc">
+            <strong>Explanation:</strong><br>
+            {{ description }}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<script>
+function previewImage(event) {
+    const img = document.getElementById('preview');
+    img.src = URL.createObjectURL(event.target.files[0]);
+    img.style.display = "block";
+}
+
+function showLoading() {
+    document.getElementById("loading").style.display = "block";
+}
+</script>
+
+</body>
+</html>
